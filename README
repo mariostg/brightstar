@@ -1,0 +1,39 @@
+BrightStar - A Slackware package awareness tool. 
+
+------------
+Introduction
+------------
+Initially I wanted something to query Slackbuilds but then I suffered from some
+scope creep and things have been degenerating... That is I decided that it 
+would be nice if the tool could also query native Slackware packages.
+Hopefully this will not turn into a black hole. :)
+
+It is written in C, which I have been learning, and I am also learning 
+about Slackware innards which somewhat add to the challenge.  
+I am not trying to replace any existing tool.  All this is astronomical 
+storm is for fun.  And if this can help any Slackware user, then so be it.
+
+-----------
+Description
+-----------
+Brightstar, named after darkstar, the default hostname of any Slackware 
+installation is aimed at making you a little more aware of your system.
+It allows you to query for packages whether they are native Slackware ones 
+or from Slackbuild repository.  Ability to sync Slackbuild repo is implemented
+as well as downloading packages.
+There is no installation or removing abilities of package at this time.  It is 
+in the todo jar.
+
+---------------------
+Compile & Installation
+---------------------
+Use the Makefile or look at the gcc command in brightstar.c
+
+----
+ToDo
+----
+
+Implement Install, remove etc.
+Implement ncurse interface
+Implement better CLI display through color output
+See if possible to add additional repositories
