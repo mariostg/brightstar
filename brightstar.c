@@ -679,9 +679,9 @@ void display_readme(package_s *pkg)
         printf("%s", line);
     fclose(fp);
 }
-/**Print to stdout the content of Display the changelog file of package.
+/**Print to stdout the content of Changelog For a Slackbuild package.
  * \param *pkg */
-void display_changelog(package_s *pkg)
+void display_slackbuild_changelog(package_s *pkg)
 {
     char *location=g_strconcat(SB_REPODIR, pkg->location+2, "/config/changelog",  NULL);
     FILE *fp;
@@ -691,6 +691,43 @@ void display_changelog(package_s *pkg)
     while (fgets(line, MAXLEN, fp))
         printf("%s", line);
     fclose(fp);
+}
+/**Print to stdout Slackware Changelog for a given package.
+ * \param *pkg */
+void display_slackware_ckangelog(slackware_s *pkg){
+    FILE *fp;
+    char line[MAXLEN];
+    enum {NEWLOG, LOGDATE, PATCH, COMMENT} logline;
+    char logdate[100];
+    char patch[100];
+    int currentline=0;
+    fp=file_open(SK_CHANGELOG, "r");
+    while (fgets(line, MAXLEN, fp)){
+        if(line[0]=='+' || currentline==0){
+            logline=NEWLOG;
+            currentline=1;
+            continue;
+        }
+        if(logline==NEWLOG){
+            strcpy(logdate, line);
+            chomp(logdate);
+            logline=LOGDATE;
+            continue;
+        }
+        if(logline==LOGDATE){
+            if(strstr(line, "patches/packages") && strstr(line, pkg->name)){
+                strcpy(patch, line);
+                logline=PATCH;
+                continue;
+            }
+        }
+        if(logline==PATCH){
+            printf("%s %s", logdate, patch);
+            logline=COMMENT;
+            continue;
+        }
+
+    }
 }
 
 /**Search SB_DB for pkg->name and retreive its installed version.
@@ -881,13 +918,22 @@ int init_parse(int argc, char *argv[])
                 free_pkg(&pkg);
             }
             else if (config->op_d_changelog){
+                int checkslack=0;
                 pkg=describe_package(argv[2]);
                 if(pkg.name[0]=='\0'){
-                    printf("%s %s\n","Nothing found for",argv[2]);
-                    return 0;
+                    printf("%s %s\n","Nothing Slackbuild for",argv[2]);
+                    checkslack=1;
+                }else{
+                    display_slackbuild_changelog(&pkg);
                 }
-                display_changelog(&pkg);
                 free_pkg(&pkg);
+                if(checkslack==1){
+                    spkg=describe_slack(argv[2]);
+                    if(spkg.fullname[0]!='\0'){
+                        display_slackware_ckangelog(&spkg);
+                    }
+                }
+                free_spkg(&spkg);
             }
             else if(config->op_d_help)
                 display_help_display();

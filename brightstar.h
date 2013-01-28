@@ -60,10 +60,12 @@ bind: nameserver are included.  Documentation for advanced name server
 #define PKG_DESCRIPTION "PACKAGE DESCRIPTION"
 
 #define SK_DB "/var/lib/slackpkg/" //!<The DB folder of all slackware packages.
-#define SK_TXT "PACKAGES.TXT"      //!<The file that contains package information.
+#define SK_TXT "PACKAGES.TXT"      //!<The file that contains Slackware package information.
+#define SK_CHNG "ChangeLog.txt"    //!<The file that contains Slackware package changelog.
 #define SK_LIST "pkglist"          //list repo, name, arch, release, version, fullname, location, extension
 #define SK_LIST_PATH SK_DB SK_LIST
 #define SK_PACKAGES SK_DB SK_TXT
+#define SK_CHANGELOG SK_DB SK_CHNG
 
 //SLACKBUILS configuration section
 #define LINE_NAME 1       //!< Line 1 for SLACKBUILD NAME: EMBASSY

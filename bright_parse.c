@@ -63,6 +63,7 @@ int parse_args(int argc, char *argv[])
         {"all",no_argument, 0, 'a'},
         {"changelog",no_argument, 0, 'c'},
         {"download",no_argument, 0, 'd'},
+        {"describe",no_argument, 0, 'd'},
         {"help",no_argument, 0, 'h'},
         {"install",no_argument, 0, 'i'},
         {"match",no_argument, 0, 'm'},
