@@ -1,3 +1,5 @@
+.*
+!./gitignore
 brightstar
 .swp
 tags

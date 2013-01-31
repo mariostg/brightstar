@@ -700,33 +700,64 @@ void display_slackware_ckangelog(slackware_s *pkg){
     enum {NEWLOG, LOGDATE, PATCH, COMMENT} logline;
     char logdate[100];
     char patch[100];
-    int currentline=0;
+    char patchcomment[5][100];
+    int patchline=0;
+    logline=NEWLOG;
     fp=file_open(SK_CHANGELOG, "r");
     while (fgets(line, MAXLEN, fp)){
-        if(line[0]=='+' || currentline==0){
-            logline=NEWLOG;
-            currentline=1;
-            continue;
-        }
-        if(logline==NEWLOG){
-            strcpy(logdate, line);
-            chomp(logdate);
+        if(line[0]=='+'){
+            if(logline==COMMENT){
+                puts(logdate);
+                puts(patch);
+                for(int i=0; i<=patchline; i++){
+                    puts(patchcomment[i]);
+                }
+                patchline=0;
+            }
             logline=LOGDATE;
             continue;
         }
         if(logline==LOGDATE){
+            strcpy(logdate, line);
+            chomp(logdate);
+            logline=PATCH;
+            continue;
+        }
+        if(logline==PATCH){
             if(strstr(line, "patches/packages") && strstr(line, pkg->name)){
                 strcpy(patch, line);
-                logline=PATCH;
+                chomp(patch);
+                //printf(">>>>>%s\n",patch);
+                logline=COMMENT;
                 continue;
             }
         }
-        if(logline==PATCH){
-            printf("%s %s", logdate, patch);
-            logline=COMMENT;
-            continue;
-        }
+        if(logline==COMMENT){
+            if(line[0]==' '){
+                strcpy(patchcomment[patchline], line);
+                chomp(patchcomment[patchline]);
+                patchline++;
+            }else if(strstr(line, "patches/packages")){
+                logline=PATCH;
+                puts(logdate);
+                puts(patch);
+                for(int i=0; i<=patchline; i++){
+                    puts(patchcomment[i]);
+                }
+                patchline=0;
+                continue;
+            }else if(line[0]=='+'){
+                logline=NEWLOG;
+                puts(logdate);
+                puts(patch);
+                for(int i=0; i<=patchline; i++){
+                    puts(patchcomment[i]);
+                }
+                patchline=0;
+                continue;
+            }
 
+        }
     }
 }
 
