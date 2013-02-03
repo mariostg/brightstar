@@ -55,8 +55,8 @@ int parse_args(int argc, char *argv[])
 {
     int opt;
     int option_index = 0;
-    const char *optstring = "DSacdhimrspu";
-    static const struct option long_options[] =
+    const char *optstring = ":DSacdhimrspu";
+    struct option long_options[] =
     {
         {"display",no_argument, 0, 'D'},
         {"system",no_argument, 0, 'S'},
@@ -80,7 +80,7 @@ int parse_args(int argc, char *argv[])
         } else if(opt == 0) {
             continue;
         } else if(opt == '?') {
-            return 1;
+            printf("%s: option '-%c' is invalid: ignored\n", argv[0], optopt);
         }
         parsearg_op(opt);
     }

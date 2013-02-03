@@ -700,11 +700,11 @@ void display_slackware_ckangelog(slackware_s *pkg){
     enum {NEWLOG, LOGDATE, PATCH, COMMENT} logline;
     char logdate[100];
     char patch[100];
-    char patchcomment[5][100];
     int patchline=0;
     logline=NEWLOG;
     fp=file_open(SK_CHANGELOG, "r");
     while (fgets(line, MAXLEN, fp)){
+        char patchcomment[25][100]={};
         if(line[0]=='+'){
             if(logline==COMMENT){
                 puts(logdate);
@@ -882,7 +882,7 @@ int YesOrNo(const char *question)
 
 int init_parse(int argc, char *argv[])
 {
-    //TODO Filter argv[2]
+    //TODO Filter argv[optind]
     int ret;
     config=init_config();
     package_s pkg;
@@ -901,9 +901,9 @@ int init_parse(int argc, char *argv[])
                 display_help_system();
             }
             else if(config->op_s_download){
-                pkg=describe_package(argv[2]);
+                pkg=describe_package(argv[optind]);
                 if(pkg.name[0]=='\0'){
-                    printf("%s %s\n","Nothing found for", argv[2]);
+                    printf("%s %s\n","Nothing found for", argv[optind]);
                     return 0;
                 }
                 request_download(&pkg);
@@ -912,11 +912,11 @@ int init_parse(int argc, char *argv[])
             break;
         case OP_DISPLAY://TODO need to look at single versus combined options
             if(config->op_d_descpkg){
-                spkg=describe_slack(argv[2]);
-                pkg=describe_package(argv[2]);
+                spkg=describe_slack(argv[optind]);
+                pkg=describe_package(argv[optind]);
                 if(pkg.name[0]=='\0'){
-                    strcpy(pkg.name, argv[2]);
-                    printf("%s %s\n","No Slackbuilds found for",argv[2]);
+                    strcpy(pkg.name, argv[optind]);
+                    printf("%s %s\n","No Slackbuilds found for",argv[optind]);
                     get_installed_version(&pkg);
                     if(pkg.version_installed)
                         printf("Found Slackware installed version %s\n", pkg.version_installed);
@@ -933,16 +933,16 @@ int init_parse(int argc, char *argv[])
                 free_spkg(&spkg);
                 free_pkg(&pkg);
             }
-            else if (config->op_d_match_name && argv[2]){
-                search_name(argv[2]);
+            else if (config->op_d_match_name && argv[optind]){
+                search_name(argv[optind]);
             }
-            else if (config->op_d_all_pkgname && argv[2]==NULL){
+            else if (config->op_d_all_pkgname && argv[optind]==NULL){
                 search_name(NULL);
             }
             else if (config->op_d_readme){
-                pkg=describe_package(argv[2]);
+                pkg=describe_package(argv[optind]);
                 if(pkg.name[0]=='\0'){
-                    printf("%s %s\n","Nothing found for",argv[2]);
+                    printf("%s %s\n","Nothing found for",argv[optind]);
                     return 0;
                 }
                 display_readme(&pkg);
@@ -950,16 +950,16 @@ int init_parse(int argc, char *argv[])
             }
             else if (config->op_d_changelog){
                 int checkslack=0;
-                pkg=describe_package(argv[2]);
+                pkg=describe_package(argv[optind]);
                 if(pkg.name[0]=='\0'){
-                    printf("%s %s\n","Nothing Slackbuild for",argv[2]);
+                    printf("%s %s\n","Nothing Slackbuild for",argv[optind]);
                     checkslack=1;
                 }else{
                     display_slackbuild_changelog(&pkg);
                 }
                 free_pkg(&pkg);
                 if(checkslack==1){
-                    spkg=describe_slack(argv[2]);
+                    spkg=describe_slack(argv[optind]);
                     if(spkg.fullname[0]!='\0'){
                         display_slackware_ckangelog(&spkg);
                     }
